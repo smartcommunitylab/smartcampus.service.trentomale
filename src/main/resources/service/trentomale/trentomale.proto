@@ -1,0 +1,17 @@
+package smartcampus.service.trentomale.data.message;
+
+import "core.proto";
+
+message Station {
+	required string name = 1;
+	repeated Train train = 2;
+	optional it.sayservice.platform.core.message.POI poi = 3;
+}
+
+message Train {
+	required int32 id = 1;
+	required int32 number = 2;
+	required string time = 3;
+	required string direction = 4;
+	required int32 delay = 5;
+}

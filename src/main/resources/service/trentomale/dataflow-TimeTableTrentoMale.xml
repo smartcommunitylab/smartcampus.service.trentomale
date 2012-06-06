@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataflow xmlns="http://www.example.org/mml-schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/mml-schema mml-schema.xsd ">
+
+	<input name="stationsList" type="String"/>
+	<output/>
+
+	<variable name="stations" type="java.util.List"/>
+
+	<script outputVar="stations">
+		<className>smartcampus.service.trentomale.helper.StationBuilder</className>
+		<method>buildStations</method>
+		<variables>
+			<value>stationsList</value>
+		</variables>
+	</script>
+
+	<foreach item="station" itemClass="smartcampus.service.trentomale.data.message.Trentomale.Station" aggregateVariable="list" outputVar="output" writeAction="append" writeMethod="addAll">
+		<items>stations</items>
+		<geolocalize outputVar="list" inputVar="station" writeAction="append" attribute="poi" onError="continue">
+			<poiName>"Stazione " + station.getName()</poiName>
+		</geolocalize>
+	</foreach>
+
+
+</dataflow>

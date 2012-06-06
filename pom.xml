@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>smartcampus</groupId>
+  <artifactId>service.trentomale</artifactId>
+  <version>1.0</version>
+  
+	<parent>
+		<groupId>it.sayservice.platform</groupId>
+		<artifactId>servicebus-conf</artifactId>
+		<version>1.1</version>
+	</parent>
+	
+	<dependencies>
+		<dependency>
+			<groupId>javax.xml.ws</groupId>
+			<artifactId>jaxws-api</artifactId>
+			<version>2.2.8</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Include-Resource>{maven-resources}</Include-Resource>
+						<Import-Package>*</Import-Package>
+						<Export-Package>service.trentomale.*,smartcampus.service.trentomale.*</Export-Package>
+						<Private-Package>!*</Private-Package>
+						<DynamicImport-Package>*</DynamicImport-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>it.sayservice.platform</groupId>
+				<artifactId>compiler-plugin</artifactId>
+				<configuration>
+					<service>service/trentomale</service>
+					<protoInputFile>trentomale.proto</protoInputFile>
+					<base>${project.basedir}/src/main/resources/</base>
+					<protoClass>smartcampus.service.trentomale.data.message.Trentomale</protoClass>
+					<storage>mongo</storage>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>ssbuild</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>it.sayservice.platform</groupId>
+				<artifactId>sb-compiler-plugin</artifactId>
+				<configuration>
+					<services>
+						<service>
+							<serviceClassName>smartcampus.service.trentomale.impl.ServiceImpl</serviceClassName>
+							<methods>
+								<method>
+									<methodName>TimeTableTrentoMale</methodName>
+									<statusParameters>
+										<storable>false</storable>
+										<automaticRefresh>false</automaticRefresh>
+										<delay>#{1000L*15}</delay>
+										<period>0 30 8 * * ? *</period>
+										<periodOnDefault>0 30 8 * * ? *</periodOnDefault>
+										<periodOnFailure>0 30 8 * * ? *</periodOnFailure>
+										<cacheValidityPeriod>#{1000L*60*60*24*15}</cacheValidityPeriod>
+										<validityPeriod>#{1000L*60*60*24*30}</validityPeriod>
+										<serviceBlocked>false</serviceBlocked>
+										<dataFlowInvokable>true</dataFlowInvokable>
+									</statusParameters>
+								</method>
+							</methods>
+						</service>
+					</services>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>sbbuild</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	
+  
+</project>
