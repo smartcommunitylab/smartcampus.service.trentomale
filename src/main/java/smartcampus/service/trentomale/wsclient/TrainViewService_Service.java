@@ -43,7 +43,7 @@ public class TrainViewService_Service
     }
 
     public TrainViewService_Service(WebServiceFeature... features) {
-        super(__getWsdlLocation(), TRAINVIEWSERVICE_QNAME, features);
+        super(__getWsdlLocation(), TRAINVIEWSERVICE_QNAME);
     }
 
     public TrainViewService_Service(URL wsdlLocation) {
@@ -51,7 +51,7 @@ public class TrainViewService_Service
     }
 
     public TrainViewService_Service(URL wsdlLocation, WebServiceFeature... features) {
-        super(wsdlLocation, TRAINVIEWSERVICE_QNAME, features);
+        super(wsdlLocation, TRAINVIEWSERVICE_QNAME);
     }
 
     public TrainViewService_Service(URL wsdlLocation, QName serviceName) {
@@ -59,7 +59,7 @@ public class TrainViewService_Service
     }
 
     public TrainViewService_Service(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
-        super(wsdlLocation, serviceName, features);
+        super(wsdlLocation, serviceName);
     }
 
     /**

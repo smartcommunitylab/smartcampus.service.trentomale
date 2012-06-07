@@ -3,6 +3,7 @@
   <groupId>smartcampus</groupId>
   <artifactId>service.trentomale</artifactId>
   <version>1.0</version>
+  <packaging>bundle</packaging>
   
 	<parent>
 		<groupId>it.sayservice.platform</groupId>
@@ -11,13 +12,13 @@
 	</parent>
 	
 	<dependencies>
-		<dependency>
-			<groupId>javax.xml.ws</groupId>
-			<artifactId>jaxws-api</artifactId>
-			<version>2.2.8</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>javax.xml.ws</groupId> -->
+<!-- 			<artifactId>jaxws-api</artifactId> -->
+<!-- 			<version>2.2.8</version> -->
+<!-- 			<type>jar</type> -->
+<!-- 			<scope>compile</scope> -->
+<!-- 		</dependency> -->
 	</dependencies>
 	
 	<build>
@@ -44,7 +45,6 @@
 					<protoInputFile>trentomale.proto</protoInputFile>
 					<base>${project.basedir}/src/main/resources/</base>
 					<protoClass>smartcampus.service.trentomale.data.message.Trentomale</protoClass>
-					<storage>mongo</storage>
 				</configuration>
 				<executions>
 					<execution>
@@ -66,14 +66,14 @@
 								<method>
 									<methodName>TimeTableTrentoMale</methodName>
 									<statusParameters>
-										<storable>false</storable>
-										<automaticRefresh>false</automaticRefresh>
+										<storable>true</storable>
+										<automaticRefresh>true</automaticRefresh>
 										<delay>#{1000L*15}</delay>
-										<period>0 30 8 * * ? *</period>
-										<periodOnDefault>0 30 8 * * ? *</periodOnDefault>
-										<periodOnFailure>0 30 8 * * ? *</periodOnFailure>
-										<cacheValidityPeriod>#{1000L*60*60*24*15}</cacheValidityPeriod>
-										<validityPeriod>#{1000L*60*60*24*30}</validityPeriod>
+										<period>#{1000L*60*2}</period>
+										<periodOnDefault>#{1000L*60*2}</periodOnDefault>
+										<periodOnFailure>#{1000L*60*5}</periodOnFailure>
+										<cacheValidityPeriod>#{1000L*60*60*2}</cacheValidityPeriod>
+										<validityPeriod>#{1000L*60*60*12}</validityPeriod>
 										<serviceBlocked>false</serviceBlocked>
 										<dataFlowInvokable>true</dataFlowInvokable>
 									</statusParameters>
