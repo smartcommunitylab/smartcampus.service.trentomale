@@ -31,51 +31,6 @@ import com.google.protobuf.Message;
 
 public class StationBuilder {
 
-//	public static List<Message> _buildStations(String stationsList) throws DatatypeConfigurationException {
-//		TrainViewService_Service service = new TrainViewService_Service();
-//    TrainViewService port = service.getBasicHttpBindingTrainViewService();
-//    BindingProvider bp = (BindingProvider) port;
-//    bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://trainview.algorab.net/TrainViewService.svc");
-//    GregorianCalendar gcal = new GregorianCalendar();
-//    ArrayOfStation stationsArray = port.getStations();
-//    
-//    String stats[] = stationsList.split(",");
-//    List<String> inputStations = Arrays.asList(stats);
-//    
-//    Map<Integer, String> stationsId = new TreeMap<Integer, String>();
-//    MultiMap stationsTimes = new MultiHashMap();
-//    
-//    for(Station station : stationsArray.getStation()) {
-//    	if (inputStations.contains(station.getName().getValue())) {
-//    		stationsId.put(station.getStationId(), station.getName().getValue());
-//    	}
-//    }
-//    XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);    
-//    TrainListTransport list = port.getTrains(xgcal);
-//    ArrayOfTrain trainsArray = list.getTrains().getValue();
-//    for(Train train : trainsArray.getTrain()) {
-//    	for (StationStop stop: train.getNextStops().getValue().getStationStop()) {
-//    		if (stationsId.containsKey(stop.getStationId())) {
-//    			stationsTimes.put(stationsId.get(stop.getStationId()), stop.getArrivalHour() + ":" + stop.getArrivalMinute());
-//    		}
-//    	}
-//    }
-//    
-//    List<Message> result = new ArrayList<Message>();
-//    for (Object station: stationsTimes.keySet()) {
-//      smartcampus.service.trentomale.data.message.Trentomale.Station.Builder builder = smartcampus.service.trentomale.data.message.Trentomale.Station.newBuilder();
-//      builder.setName((String)station);
-//    	List<String> times = (List)stationsTimes.get(station); 
-//      Collections.sort(times);
-//    	for (String time: times) {
-//    		builder.addTime(time);
-//    	}
-//    	result.add(builder.build());
-//    }
-//    
-//    return result;
-//	}
-	
 	public static List<Message> buildStations(String stationsList) throws DatatypeConfigurationException {
 		TrainViewService_Service service = new TrainViewService_Service();
     TrainViewService port = service.getBasicHttpBindingTrainViewService();
@@ -120,7 +75,9 @@ public class StationBuilder {
     			trainBuilder.setId(train.getTrainId());
     			trainBuilder.setNumber(train.getTrainNumber());
     			trainBuilder.setDelay(train.getCurrentDelay());
-    			trainBuilder.setTime(stop.getArrivalHour() + ":" + stop.getArrivalMinute());
+    			String minute = "" + stop.getArrivalMinute();
+    			minute = (minute.length() < 2)?("0" + minute):minute;
+    			trainBuilder.setTime(stop.getArrivalHour() + ":" + minute);
     			trainBuilder.setDirection(stationsId.get(lastStop.getStationId()));
 
     			smartcampus.service.trentomale.data.message.Trentomale.Train trainProto = trainBuilder.build();
