@@ -90,11 +90,12 @@ public class StationBuilder {
     for (Integer stationId: inputStationsId) {
   		smartcampus.service.trentomale.data.message.Trentomale.Station.Builder stationBuilder = smartcampus.service.trentomale.data.message.Trentomale.Station.newBuilder();
   		stationBuilder.setName((String)stationsId.get(stationId));
-  		stationBuilder.addAllTrain((List)tmpTrains.get(stationId));
+  		List stationTrains = (List)tmpTrains.get(stationId);
+  		if (stationTrains != null) {
+  			stationBuilder.addAllTrain(stationTrains);
+  		}
   		result.add(stationBuilder.build());
     }
-    
-//    System.out.println(stationsId);
     
     return result;
 	}
