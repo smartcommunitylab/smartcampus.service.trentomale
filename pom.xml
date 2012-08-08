@@ -78,6 +78,21 @@
 										<dataFlowInvokable>true</dataFlowInvokable>
 									</statusParameters>
 								</method>
+								<method>
+									<methodName>TrainsTrentoMale</methodName>
+									<statusParameters>
+										<storable>true</storable>
+										<automaticRefresh>true</automaticRefresh>
+										<delay>#{1000L*15}</delay>
+										<period>#{1000L*60*2}</period>
+										<periodOnDefault>#{1000L*60*2}</periodOnDefault>
+										<periodOnFailure>#{1000L*60*5}</periodOnFailure>
+										<cacheValidityPeriod>#{1000L*60*60*2}</cacheValidityPeriod>
+										<validityPeriod>#{1000L*60*60*12}</validityPeriod>
+										<serviceBlocked>false</serviceBlocked>
+										<dataFlowInvokable>true</dataFlowInvokable>
+									</statusParameters>
+								</method>								
 							</methods>
 						</service>
 					</services>

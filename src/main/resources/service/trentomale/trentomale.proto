@@ -11,7 +11,7 @@ message Station {
 message Train {
 	required int32 id = 1;
 	required int32 number = 2;
-	required string time = 3;
-	required string direction = 4;
+	optional string time = 3;
+	optional string direction = 4;
 	required int32 delay = 5;
 }
