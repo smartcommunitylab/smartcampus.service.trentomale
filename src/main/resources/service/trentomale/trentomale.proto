@@ -27,4 +27,5 @@ message Train {
 	optional string time = 3;
 	optional string direction = 4;
 	required int32 delay = 5;
+	required string station = 6;
 }

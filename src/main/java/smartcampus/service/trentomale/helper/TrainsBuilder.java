@@ -18,6 +18,7 @@ package smartcampus.service.trentomale.helper;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -51,12 +52,15 @@ public class TrainsBuilder {
 		BindingProvider bp = (BindingProvider) port;
 		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://trainview.algorab.net/TrainViewService.svc");
 		GregorianCalendar gcal = new GregorianCalendar();
+		gcal.set(Calendar.HOUR, 0);
 		ArrayOfStation stationsArray = port.getStations();
 
 
-		List<Integer> inputStationsId = new ArrayList<Integer>();
 		Map<Integer, String> stationsId = new TreeMap<Integer, String>();
 		MultiMap stationsTimes = new MultiHashMap();
+		for (Station station : stationsArray.getStation()) {
+			stationsId.put(station.getStationId(), station.getName().getValue());
+		}
 
 		XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
 		TrainListTransport list = port.getTrains(xgcal);
@@ -68,14 +72,16 @@ public class TrainsBuilder {
 		for (Train train : trainsArray.getTrain()) {
 			int lastStopN = train.getNextStops().getValue().getStationStop().size() - 1;
 			StationStop lastStop = train.getNextStops().getValue().getStationStop().get(lastStopN);
+			StationStop stop = train.getNextStops().getValue().getStationStop().get(0);
 			smartcampus.service.trentomale.data.message.Trentomale.Train.Builder trainBuilder = smartcampus.service.trentomale.data.message.Trentomale.Train.newBuilder();
 			trainBuilder.setId(train.getTrainId());
 			trainBuilder.setNumber(train.getTrainNumber());
 			trainBuilder.setDelay(train.getCurrentDelay());
-//			String minute = "" + stop.getArrivalMinute();
-//			minute = (minute.length() < 2) ? ("0" + minute) : minute;
-//			trainBuilder.setTime(stop.getArrivalHour() + ":" + minute);
-//			trainBuilder.setDirection(stationsId.get(lastStop.getStationId()));
+			String minute = "" + stop.getArrivalMinute();
+			minute = (minute.length() < 2) ? ("0" + minute) : minute;
+			trainBuilder.setTime(stop.getArrivalHour() + ":" + minute);
+			trainBuilder.setDirection(stationsId.get(lastStop.getStationId()));
+			trainBuilder.setStation(stationsId.get(stop.getStationId()));
 
 			smartcampus.service.trentomale.data.message.Trentomale.Train trainProto = trainBuilder.build();
 
