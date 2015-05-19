@@ -17,14 +17,12 @@ package smartcampus.service.trentomale.test;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
-import smartcampus.service.trentomale.helper.StationBuilder;
-import smartcampus.service.trentomale.helper.TrainsBuilder;
-
 import junit.framework.TestCase;
+import smartcampus.service.trentomale.helper.TrainsBuilder;
 
 public class Test extends TestCase {
 
-	public void test() throws DatatypeConfigurationException {
+	public void test() throws Exception {
 //		System.out.println(StationBuilder.buildStations("Trento,Cles"));
 		
 		System.out.println(TrainsBuilder.buildTrains());
