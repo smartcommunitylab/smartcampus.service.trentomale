@@ -1,94 +1,90 @@
-/*******************************************************************************
- * Copyright 2012-2013 Trento RISE
- * 
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- * 
- *        http://www.apache.org/licenses/LICENSE-2.0
- * 
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- ******************************************************************************/
 package smartcampus.service.trentomale.helper;
 
-import java.nio.charset.Charset;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.ws.BindingProvider;
+import org.codehaus.jackson.map.ObjectMapper;
 
-import org.apache.commons.collections.MultiHashMap;
-import org.apache.commons.collections.MultiMap;
-
-import smartcampus.service.trentomale.wsclient.ArrayOfStation;
-import smartcampus.service.trentomale.wsclient.ArrayOfTrain;
-import smartcampus.service.trentomale.wsclient.Station;
-import smartcampus.service.trentomale.wsclient.StationStop;
-import smartcampus.service.trentomale.wsclient.Train;
-import smartcampus.service.trentomale.wsclient.TrainListTransport;
-import smartcampus.service.trentomale.wsclient.TrainViewService;
-import smartcampus.service.trentomale.wsclient.TrainViewService_Service;
+import smartcampus.service.trentomale.data.message.Trentomale.Train;
 
 import com.google.protobuf.Message;
 
 public class TrainsBuilder {
 
-	public static List<Message> buildTrains() throws DatatypeConfigurationException {
-		TrainViewService_Service service = new TrainViewService_Service();
-		TrainViewService port = service.getBasicHttpBindingTrainViewService();
-		BindingProvider bp = (BindingProvider) port;
-		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://trainview.algorab.net/TrainViewService.svc");
-		GregorianCalendar gcal = new GregorianCalendar();
-		gcal.set(Calendar.HOUR, 0);
-		ArrayOfStation stationsArray = port.getStations();
-
-
-		Map<Integer, String> stationsId = new TreeMap<Integer, String>();
-		MultiMap stationsTimes = new MultiHashMap();
-		for (Station station : stationsArray.getStation()) {
-			stationsId.put(station.getStationId(), station.getName().getValue());
+	private static Stazione[] stazioni = { new Stazione(147,1,"Trento"), new Stazione(2159,3,"Trento Nord"), new Stazione(4323,4,"Gardolo"), new Stazione(5656,5,"Zona industriale"), new Stazione(6400,6,"Lamar"), new Stazione(7741,7,"Lavis"), new Stazione(9538,8,"Zambana"), new Stazione(11685,9,"Nave s. Felice"), new Stazione(14834,11,"Grumo s. Michele"), new Stazione(16500,12,"Mezzocorona F."), new Stazione(17750,13,"Mezzocorona B."), new Stazione(19736,14,"Mezzolombardo"), new Stazione(23457,15,"Masi di Vigo"), new Stazione(24278,16,"Crescino"), new Stazione(26551,17,"Denno"), new Stazione(31524,19,"Mollaro"), new Stazione(32625,20,"Segno"), new Stazione(34711,21,"Taio"), new Stazione(36516,22,"Dermulo"), new Stazione(38007,23,"Tassullo"), new Stazione(41607,24,"Cles"), new Stazione(42541,25,"Cles p. scolastico"), new Stazione(45880,26,"Mostizzolo"), new Stazione(48137,27,"Bozzana"), new Stazione(49397,28,"Tozzaga"), new Stazione(50416,29,"Cassana"), new Stazione(51407,30,"Cavizzana"), new Stazione(52201,31,"Caldes"), new Stazione(54095,32,"Terzolas"), new Stazione(55493,33,"Malé"), new Stazione(56953,34,"Croviana"), new Stazione(58813,35,"Monclassico"), new Stazione(60186,36,"Dimaro - Presson"), new Stazione(62365,37,"Mastellina"), new Stazione(63385,38,"Daolasa"), new Stazione(64093,39,"Piano"), new Stazione(65299,40,"Marilleva 900"), new Stazione(66099,41,"Mezzana")};
+	private static Map<Integer, Stazione> stazioniMap;
+	
+	static {
+		stazioniMap = new TreeMap<Integer, Stazione>();
+		for (Stazione stazione: stazioni) {
+			stazioniMap.put(stazione.getId(), stazione);
 		}
-
-		XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
-		TrainListTransport list = port.getTrains(xgcal);
-		ArrayOfTrain trainsArray = list.getTrains().getValue();
+		}
+	
+	public static List<Message> buildTrains() throws Exception {
 		List<Message> result = new ArrayList<Message>();
 
-		MultiMap tmpTrains = new MultiHashMap();
+		ObjectMapper mapper = new ObjectMapper();
 
-		for (Train train : trainsArray.getTrain()) {
-			int lastStopN = train.getNextStops().getValue().getStationStop().size() - 1;
-			StationStop lastStop = train.getNextStops().getValue().getStationStop().get(lastStopN);
-			StationStop stop = train.getNextStops().getValue().getStationStop().get(0);
-			smartcampus.service.trentomale.data.message.Trentomale.Train.Builder trainBuilder = smartcampus.service.trentomale.data.message.Trentomale.Train.newBuilder();
-			trainBuilder.setId(train.getTrainId());
-			trainBuilder.setNumber(train.getTrainNumber());
-			trainBuilder.setDelay(train.getCurrentDelay());
-			String minute = "" + stop.getArrivalMinute();
-			minute = (minute.length() < 2) ? ("0" + minute) : minute;
-			trainBuilder.setTime(stop.getArrivalHour() + ":" + minute);
-			trainBuilder.setDirection(stationsId.get(lastStop.getStationId()));
-			trainBuilder.setStation(stationsId.get(stop.getStationId()));
+		Orari orari = mapper.readValue(new URL(
+				"http://trainview.algorab.net/Ddati.ashx"), Orari.class);
+		Treni treni = mapper.readValue(new URL(
+				"http://trainview.algorab.net/Tdati.ashx"), Treni.class);
 
-			smartcampus.service.trentomale.data.message.Trentomale.Train trainProto = trainBuilder.build();
+		for (Treno treno : treni.getTreni()) {
+			Train.Builder builder = Train.newBuilder();
+			Stazione stazione = findNearest(treno);
 
-			result.add(trainProto);
+			builder.setId(treno.getTrainId());
+			builder.setNumber(treno.getTrainNumber());
+			builder.setStation(stazione.getName());
+			builder.setDelay(treno.getCurrentDelay());
+
+			System.out.println(">" + treno.getTrainId());
+			boolean time = false;
+			String last = null;
+			for (Orario orario : orari.getOrari()) {
+				if (!orario.getC_train().equals(treno.getTrainId())) {
+					continue;
+				}
+				last = stazioniMap.get(orario.getC_stop()).getName();
+				if (!time) {
+					for (int inc : new int[] { 0, -1, 1 }) {
+						if (!time
+								&& orario.getC_stop().intValue() + inc == stazione
+										.getId()) {
+							builder.setTime(orario.getI_hours() + ":"
+									+ orario.getI_minutes());
+							time = true;
+							break;
+						}
+					}
+				}
+			}
+
+			builder.setDirection(last);
+			result.add(builder.build());
 		}
 
 		return result;
 	}
-
+	
+	private static Stazione findNearest(Treno treno) {
+		Stazione nearest = null;
+		long distance = Long.MAX_VALUE;
+		for (Stazione stazione: stazioni) {
+			int d = Math.abs(treno.getPosition() - stazione.getPosition());
+			if (d < distance) {
+				distance = d;
+				nearest = stazione;
+			}
+		}
+		
+		return nearest;
+	}
+	
+	
 }

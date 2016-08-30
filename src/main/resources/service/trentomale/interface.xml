@@ -18,10 +18,6 @@
 	xsi:schemaLocation="http://smart.sayservice.it/schema/interface-schema http://smart.sayservice.it/schema/interface-schema-1.7.xsd ">
 	<interface serviceURI="smartcampus.service.TrentoMale">
 		
-		<operation name="TimeTableTrentoMale" storable="true">
-			<parameter name="stationsList" type="String" />
-			<output type="smartcampus.service.trentomale.data.message.Trentomale.Station" repeated="true" />
-		</operation>
 		<operation name="TrainsTrentoMale" storable="true">
 			<output type="smartcampus.service.trentomale.data.message.Trentomale.Train" repeated="true" />
 		</operation>		
@@ -29,7 +25,6 @@
 	</interface>
 
 	<implementation package="smartcampus.service.trentomale">
-		<operationImpl name="TimeTableTrentoMale" />
 		<operationImpl name="TrainsTrentoMale" />
 	</implementation>
 	
